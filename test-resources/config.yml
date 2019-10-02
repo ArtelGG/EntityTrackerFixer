@@ -1,0 +1,15 @@
+settings:
+  global:
+    tps-limit: 18.5
+    enabled-worlds:
+      - world
+      - world_nether
+      - world_the_end
+  un-tracking:
+    ticks: 600
+  re-tracking:
+    ticks: 40
+    range: 30
+  logging:
+    enabled: false
+    debug-level: false

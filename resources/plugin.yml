@@ -1,0 +1,15 @@
+name: EntityTrackerFixer
+author: Esmorall
+
+version: 1.1.2-DEV
+main: net.minemora.entitytrackerfixer.Main
+api-version: 1.13
+
+commands:
+  entitytrackerfixer:
+    aliases: [etf]
+    permission: entitytrackerfixer.admin
+
+permissions:
+  entitytrackerfixer.admin:
+    default: op

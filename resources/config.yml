@@ -1,0 +1,17 @@
+# Should we notify the console when we stop tracking entities?
+log-to-console: false
+
+# How low should the server's TPS be before we do anything?
+tps-limit: 18.5
+
+# What worlds should we perform our tasks on?
+worlds: [world, world_nether, world_the_end]
+
+# How often (in ticks) should we check for "lingering" entities?
+untrack-ticks: 600
+
+# How often (in ticks) should we check for players near un-tracked entities?
+retrack-ticks: 40
+
+# How far (in blocks) should we look for players near un-tracked entities?
+retrack-range: 30
