@@ -2,34 +2,23 @@ package net.minemora.entitytrackerfixer.tasks;
 
 import net.minecraft.server.v1_14_R1.ChunkProviderServer;
 import net.minecraft.server.v1_14_R1.EntityPlayer;
-import net.minecraft.server.v1_14_R1.MinecraftServer;
 import net.minecraft.server.v1_14_R1.PlayerChunkMap.EntityTracker;
 import net.minecraft.server.v1_14_R1.WorldServer;
 import net.minemora.entitytrackerfixer.Main;
-import net.minemora.entitytrackerfixer.utilities.Reflection;
+import net.minemora.entitytrackerfixer.utilities.NMSEntityTracker;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
 
 public class UntrackTask extends BukkitRunnable {
     private static boolean running = false;
-    private static Field trackerField;
-
-    static {
-        try {
-            trackerField = Reflection.getClassPrivateField(EntityTracker.class, "tracker");
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void run() {
-        if (MinecraftServer.getServer().recentTps[0] > Main.plugin.getConfig().getDouble("tps-limit")) {
+        if (Bukkit.getServer().getTPS()[0] > Main.plugin.getConfig().getDouble("tps-limit")) {
             return;
         }
         running = true;
@@ -49,7 +38,7 @@ public class UntrackTask extends BukkitRunnable {
         ChunkProviderServer cps = ws.getChunkProvider();
         try {
             for (EntityTracker et : cps.playerChunkMap.trackedEntities.values()) {
-                net.minecraft.server.v1_14_R1.Entity nmsEnt = (net.minecraft.server.v1_14_R1.Entity) trackerField.get(et);
+                net.minecraft.server.v1_14_R1.Entity nmsEnt = (net.minecraft.server.v1_14_R1.Entity) NMSEntityTracker.getTrackerField().get(et);
                 if (nmsEnt instanceof EntityPlayer) {
                     continue;
                 }
@@ -85,7 +74,7 @@ public class UntrackTask extends BukkitRunnable {
         }
     }
 
-	public static boolean isRunning() {
-		return running;
-	}
+    static boolean isRunning() {
+        return running;
+    }
 }

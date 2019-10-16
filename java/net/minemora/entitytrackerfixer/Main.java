@@ -15,8 +15,8 @@ public class Main extends JavaPlugin {
         saveDefaultConfig();
         reloadConfig();
         getCommand("entitytrackerfixer").setExecutor(new EntityTrackerFixer());
-        startUntrackTask(Main.plugin.getConfig().getInt("untrack-ticks"));
-        startRetrackTask(Main.plugin.getConfig().getInt("retrack-ticks"));
+        startUntrackTask(getConfig().getInt("untrack-ticks"));
+        startRetrackTask(getConfig().getInt("retrack-ticks"));
     }
 
     public void startUntrackTask(int period) {

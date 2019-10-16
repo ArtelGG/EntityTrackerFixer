@@ -6,9 +6,7 @@ import java.lang.reflect.Method;
 
 public final class Reflection {
 
-    private Reflection() {}
-
-    public static Object getPrivateField(Class<? extends Object> clazz, Object obj, String fieldName)
+    public static Object getPrivateField(Class<?> clazz, Object obj, String fieldName)
             throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         Field field = clazz.getDeclaredField(fieldName);
         field.setAccessible(true);
@@ -17,25 +15,25 @@ public final class Reflection {
         return ret;
     }
 
-    public static Field getClassPrivateField(Class<? extends Object> clazz, String fieldName)
+    public static Field getClassPrivateField(Class<?> clazz, String fieldName)
             throws NoSuchFieldException, SecurityException, IllegalArgumentException {
         Field field = clazz.getDeclaredField(fieldName);
         field.setAccessible(true);
         return field;
     }
 
-    public static Object invokePrivateMethod(Class<? extends Object> clazz, Object obj, String methodName)
+    public static Object invokePrivateMethod(Class<?> clazz, Object obj, String methodName)
             throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         return invokePrivateMethod(clazz, obj, methodName, new Class[0]);
     }
 
-    public static Object invokePrivateMethod(Class<? extends Object> clazz, Object obj, String methodName, Class[] params, Object... args)
+    public static Object invokePrivateMethod(Class<?> clazz, Object obj, String methodName, Class[] params, Object... args)
             throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         Method method = getPrivateMethod(clazz, methodName, params);
         return method.invoke(obj, args);
     }
 
-    public static Method getPrivateMethod(Class<? extends Object> clazz, String methodName, Class[] params)
+    public static Method getPrivateMethod(Class<?> clazz, String methodName, Class[] params)
             throws NoSuchMethodException, SecurityException {
         Method method = clazz.getDeclaredMethod(methodName, params);
         method.setAccessible(true);

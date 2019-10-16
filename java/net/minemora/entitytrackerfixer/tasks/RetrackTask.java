@@ -29,7 +29,7 @@ public class RetrackTask extends BukkitRunnable {
         }
     }
 
-    public void checkWorld(String worldName) {
+    private void checkWorld(String worldName) {
         WorldServer ws = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
         ChunkProviderServer cps = ws.getChunkProvider();
         Set<net.minecraft.server.v1_14_R1.Entity> trackAgain = new HashSet<>();
