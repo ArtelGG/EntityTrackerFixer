@@ -1,5 +1,6 @@
 name: EntityTrackerFixer
 author: Esmorall
+description: Deal with those pesky "lingering" entities.
 
 version: 1.1.2-DEV
 main: net.minemora.entitytrackerfixer.Main

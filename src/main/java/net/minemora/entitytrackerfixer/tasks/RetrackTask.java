@@ -18,29 +18,29 @@ public class RetrackTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (UntrackTask.isRunning()) {
+        if (UntrackTask.running) {
             return;
         }
         for (String worldName : Main.plugin.getConfig().getStringList("worlds")) {
             if (Bukkit.getWorld(worldName) == null) {
                 continue;
             }
-            checkWorld(worldName);
+            retrackProcess(worldName);
         }
     }
 
-    private void checkWorld(String worldName) {
-        WorldServer ws = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
-        ChunkProviderServer cps = ws.getChunkProvider();
-        Set<net.minecraft.server.v1_14_R1.Entity> trackAgain = new HashSet<>();
-        int d = Main.plugin.getConfig().getInt("retrack-range");
+    private void retrackProcess(String worldName) {
+        WorldServer worldServer = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
+        ChunkProviderServer chunkProvider = worldServer.getChunkProvider();
+        Set<net.minecraft.server.v1_14_R1.Entity> entities = new HashSet<>();
+        int range = Main.plugin.getConfig().getInt("retrack-range");
         for (Player player : Bukkit.getWorld(worldName).getPlayers()) {
-            for (Entity ent : player.getNearbyEntities(d, d, d)) {
-                if (!cps.playerChunkMap.trackedEntities.containsKey(ent.getEntityId())) {
-                    trackAgain.add(((CraftEntity) ent).getHandle());
+            for (Entity entity : player.getNearbyEntities(range, range, range)) {
+                if (!chunkProvider.playerChunkMap.trackedEntities.containsKey(entity.getEntityId())) {
+                    entities.add(((CraftEntity) entity).getHandle());
                 }
             }
         }
-        NMSEntityTracker.trackEntities(cps, trackAgain);
+        NMSEntityTracker.retrackEntities(chunkProvider, entities);
     }
 }

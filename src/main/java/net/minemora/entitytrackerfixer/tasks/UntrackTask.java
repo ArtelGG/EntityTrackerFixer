@@ -14,11 +14,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class UntrackTask extends BukkitRunnable {
-    private static boolean running = false;
+    static boolean running = false;
 
     @Override
     public void run() {
-        if (Bukkit.getServer().getTPS()[0] > Main.plugin.getConfig().getDouble("tps-limit")) {
+        if (tpsLimitReached(Main.plugin.getConfig().getDouble("tps-limit"))) {
             return;
         }
         running = true;
@@ -34,23 +34,23 @@ public class UntrackTask extends BukkitRunnable {
         }
         Set<Integer> toRemove = new HashSet<>();
         int removed = 0;
-        WorldServer ws = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
-        ChunkProviderServer cps = ws.getChunkProvider();
+        WorldServer worldServer = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
+        ChunkProviderServer chunkProvider = worldServer.getChunkProvider();
         try {
-            for (EntityTracker et : cps.playerChunkMap.trackedEntities.values()) {
-                net.minecraft.server.v1_14_R1.Entity nmsEnt = (net.minecraft.server.v1_14_R1.Entity) NMSEntityTracker.getTrackerField().get(et);
-                if (nmsEnt instanceof EntityPlayer) {
+            for (EntityTracker entityTracker : chunkProvider.playerChunkMap.trackedEntities.values()) {
+                net.minecraft.server.v1_14_R1.Entity entity = (net.minecraft.server.v1_14_R1.Entity) NMSEntityTracker.getTrackerField().get(entityTracker);
+                if (entity instanceof EntityPlayer) {
                     continue;
                 }
-                if (nmsEnt.getBukkitEntity().getCustomName() != null) {
+                if (entity.getBukkitEntity().getCustomName() != null) {
                     continue;
                 }
                 boolean remove = false;
-                if (et.trackedPlayers.size() == 0) {
+                if (entityTracker.trackedPlayers.size() == 0) {
                     remove = true;
-                } else if (et.trackedPlayers.size() == 1) {
-                    for (EntityPlayer ep : et.trackedPlayers) {
-                        if (!ep.getBukkitEntity().isOnline()) {
+                } else if (entityTracker.trackedPlayers.size() == 1) {
+                    for (EntityPlayer entityPlayer : entityTracker.trackedPlayers) {
+                        if (!entityPlayer.getBukkitEntity().isOnline()) {
                             remove = true;
                         }
                     }
@@ -59,7 +59,7 @@ public class UntrackTask extends BukkitRunnable {
                     }
                 }
                 if (remove) {
-                    toRemove.add(nmsEnt.getId());
+                    toRemove.add(entity.getId());
                     removed++;
                 }
             }
@@ -67,14 +67,15 @@ public class UntrackTask extends BukkitRunnable {
             e.printStackTrace();
         }
         for (int id : toRemove) {
-            cps.playerChunkMap.trackedEntities.remove(id);
+            chunkProvider.playerChunkMap.trackedEntities.remove(id);
         }
         if (Main.plugin.getConfig().getBoolean("log-to-console") && removed > 0) {
             Main.plugin.getLogger().info("Un-tracked " + removed + " " + (removed == 1 ? "entity" : "entities") + " in " + worldName);
         }
     }
 
-    static boolean isRunning() {
-        return running;
+    private boolean tpsLimitReached(double limit) {
+        if (limit > 20 || limit < 1) return false; // Allows the user to disable the TPS check entirely.
+        return Main.plugin.getTPS() > limit;
     }
 }

@@ -23,23 +23,23 @@ public final class NMSEntityTracker {
         }
     }
 
-    public static void trackEntities(ChunkProviderServer cps, Set<net.minecraft.server.v1_14_R1.Entity> trackList) {
+    public static void retrackEntities(ChunkProviderServer chunkProviderServer, Set<net.minecraft.server.v1_14_R1.Entity> entities) {
         try {
-            for (net.minecraft.server.v1_14_R1.Entity entity : trackList) {
-                if (cps.playerChunkMap.trackedEntities.containsKey(entity.getId())) {
+            for (net.minecraft.server.v1_14_R1.Entity entity : entities) {
+                if (chunkProviderServer.playerChunkMap.trackedEntities.containsKey(entity.getId())) {
                     continue;
                 }
-                addEntityMethod.invoke(cps.playerChunkMap, entity);
+                addEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
             }
         } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
-    public static void untrackEntities(ChunkProviderServer cps, Set<net.minecraft.server.v1_14_R1.Entity> untrackList) {
+    public static void untrackEntities(ChunkProviderServer chunkProviderServer, Set<net.minecraft.server.v1_14_R1.Entity> entities) {
         try {
-            for (net.minecraft.server.v1_14_R1.Entity entity : untrackList) {
-                removeEntityMethod.invoke(cps.playerChunkMap, entity);
+            for (net.minecraft.server.v1_14_R1.Entity entity : entities) {
+                removeEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
             }
         } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();

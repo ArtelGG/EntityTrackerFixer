@@ -30,4 +30,8 @@ public class Main extends JavaPlugin {
     public void stopTasks() {
         Bukkit.getScheduler().cancelTasks(this);
     }
+
+    public double getTPS() {
+        return Bukkit.getServer().getTPS()[0];
+    }
 }
