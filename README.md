@@ -16,7 +16,7 @@ Further optimizing your server to ensure it's running as smoothly as possible, g
 Unfortunately, due to the code we use, there are no Maven repositories available for us to make this project easily accessible.
 
 Contributing will require you to obtain server software and add it as a library to your IDE of choice, to obtain packages such as `net.minecraft.server` and so fourth.
-[This](https://yivesmirror.com/) should get you started.
+[This](https://www.spigotmc.org/wiki/buildtools/) should get you started.
 
 This is necessary due to how Mojang handles code (re)distribution.
 

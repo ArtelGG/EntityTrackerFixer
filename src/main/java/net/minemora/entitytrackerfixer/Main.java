@@ -1,5 +1,6 @@
 package net.minemora.entitytrackerfixer;
 
+import net.minecraft.server.v1_14_R1.MinecraftServer;
 import net.minemora.entitytrackerfixer.commands.EntityTrackerFixer;
 import net.minemora.entitytrackerfixer.tasks.RetrackTask;
 import net.minemora.entitytrackerfixer.tasks.UntrackTask;
@@ -19,12 +20,13 @@ public class Main extends JavaPlugin {
         startRetrackTask(getConfig().getInt("retrack-ticks"));
     }
 
+    // TODO: Add an option to make the tasks multi-threaded, because why not.
     public void startUntrackTask(int period) {
-        new UntrackTask().runTaskTimer(this, 0, period);
+        Bukkit.getScheduler().runTaskTimer(this, UntrackTask.getInstance(), 0, period);
     }
 
     public void startRetrackTask(int period) {
-        new RetrackTask().runTaskTimer(this, 0, period);
+        Bukkit.getScheduler().runTaskTimer(this, RetrackTask.getInstance(), 0, period);
     }
 
     public void stopTasks() {
@@ -32,6 +34,11 @@ public class Main extends JavaPlugin {
     }
 
     public double getTPS() {
-        return Bukkit.getServer().getTPS()[0];
+        return MinecraftServer.getServer().recentTps[0];
+    }
+
+    public boolean tpsLimitReached(double limit) {
+        if (limit > 20 || limit < 1) return false;
+        return getTPS() > limit;
     }
 }

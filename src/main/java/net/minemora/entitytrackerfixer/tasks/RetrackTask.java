@@ -9,27 +9,31 @@ import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class RetrackTask extends BukkitRunnable {
+public class RetrackTask implements Runnable {
+    public boolean running = false;
+
+    public static RetrackTask getInstance() {
+        return new RetrackTask();
+    }
 
     @Override
     public void run() {
-        if (UntrackTask.running) {
-            return;
-        }
         for (String worldName : Main.plugin.getConfig().getStringList("worlds")) {
-            if (Bukkit.getWorld(worldName) == null) {
-                continue;
-            }
             retrackProcess(worldName);
         }
     }
 
     private void retrackProcess(String worldName) {
+        if (UntrackTask.getInstance().running) {
+            return;
+        }
+        if (Bukkit.getWorld(worldName) == null) {
+            return;
+        }
         WorldServer worldServer = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
         ChunkProviderServer chunkProvider = worldServer.getChunkProvider();
         Set<net.minecraft.server.v1_14_R1.Entity> entities = new HashSet<>();

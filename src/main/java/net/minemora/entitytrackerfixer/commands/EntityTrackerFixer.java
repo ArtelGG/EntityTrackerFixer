@@ -9,13 +9,13 @@ import org.bukkit.command.CommandSender;
 public class EntityTrackerFixer implements CommandExecutor {
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] arguments) {
+    public boolean onCommand(CommandSender commandSender, Command command, String label, String[] arguments) {
         if (!commandSender.hasPermission("entitytrackerfixer.admin")) {
             commandSender.sendMessage(ChatColor.RED + "You don't have permission to use that command.");
             return true;
         }
         if (arguments.length == 0) {
-            commandSender.sendMessage(ChatColor.RED + "Usage: /" + commandLabel + " <reload|debug>");
+            commandSender.sendMessage(ChatColor.RED + "Usage: /" + label + " <reload|debug>");
             return true;
         }
         if (arguments[0].equalsIgnoreCase("reload")) {
@@ -32,7 +32,7 @@ public class EntityTrackerFixer implements CommandExecutor {
             commandSender.sendMessage("Re-track range: " + Main.plugin.getConfig().getInt("retrack-range"));
             commandSender.sendMessage("Enabled worlds: " + Main.plugin.getConfig().getStringList("worlds"));
         } else {
-            commandSender.sendMessage(ChatColor.RED + "Usage: /" + commandLabel + " <reload|debug>");
+            commandSender.sendMessage(ChatColor.RED + "Usage: /" + label + " <reload|debug>");
             return true;
         }
         return true;
