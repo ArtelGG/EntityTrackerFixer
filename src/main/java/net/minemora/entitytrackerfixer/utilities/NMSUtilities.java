@@ -25,23 +25,23 @@ public final class NMSUtilities {
         }
     }
 
-    public static void retrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {
+    public static void unTrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {
         try {
             for (Entity entity : entities) {
-                if (chunkProviderServer.playerChunkMap.trackedEntities.containsKey(entity.getId())) {
-                    continue;
-                }
-                addEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
+                removeEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
             }
         } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
-    public static void untrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {
+    public static void reTrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {
         try {
             for (Entity entity : entities) {
-                removeEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
+                if (chunkProviderServer.playerChunkMap.trackedEntities.containsKey(entity.getId())) {
+                    continue;
+                }
+                addEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
             }
         } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             e.printStackTrace();
