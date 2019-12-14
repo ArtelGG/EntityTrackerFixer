@@ -1,11 +1,13 @@
 package net.minemora.entitytrackerfixer.tasks;
 
-import net.minecraft.server.v1_14_R1.*;
+import net.minecraft.server.v1_14_R1.Entity;
+import net.minecraft.server.v1_14_R1.EntityEnderDragon;
+import net.minecraft.server.v1_14_R1.EntityPlayer;
+import net.minecraft.server.v1_14_R1.EntityWither;
 import net.minecraft.server.v1_14_R1.PlayerChunkMap.EntityTracker;
 import net.minemora.entitytrackerfixer.Main;
-import net.minemora.entitytrackerfixer.utilities.NMSEntityTracker;
+import net.minemora.entitytrackerfixer.utilities.NMSUtilities;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -36,13 +38,11 @@ public class UntrackTask implements Runnable {
         if (Bukkit.getWorld(worldName) == null) {
             return;
         }
-        WorldServer worldServer = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
-        ChunkProviderServer chunkProvider = worldServer.getChunkProvider();
         Set<Integer> toRemove = new HashSet<>();
         int removed = 0;
         try {
-            for (EntityTracker entityTracker : chunkProvider.playerChunkMap.trackedEntities.values()) {
-                Entity entity = (Entity) NMSEntityTracker.getTrackerField().get(entityTracker);
+            for (EntityTracker entityTracker : NMSUtilities.getTrackedEntities(worldName).values()) {
+                Entity entity = (Entity) NMSUtilities.getTrackerField().get(entityTracker);
                 if (entity instanceof EntityPlayer || entity instanceof EntityWither || entity instanceof EntityEnderDragon) {
                     continue;
                 }
@@ -71,7 +71,7 @@ public class UntrackTask implements Runnable {
             e.printStackTrace();
         }
         for (int id : toRemove) {
-            chunkProvider.playerChunkMap.trackedEntities.remove(id);
+            NMSUtilities.getTrackedEntities(worldName).remove(id);
         }
         if (Main.plugin.getConfig().getBoolean("log-to-console") && removed > 0) {
             Main.plugin.getLogger().info("Un-tracked " + removed + " " + (removed == 1 ? "entity" : "entities") + " in " + worldName);

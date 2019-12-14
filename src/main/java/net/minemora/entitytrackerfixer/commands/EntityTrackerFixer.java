@@ -1,6 +1,7 @@
 package net.minemora.entitytrackerfixer.commands;
 
 import net.minemora.entitytrackerfixer.Main;
+import net.minemora.entitytrackerfixer.utilities.NMSUtilities;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -25,7 +26,7 @@ public class EntityTrackerFixer implements CommandExecutor {
             Main.plugin.startRetrackTask(Main.plugin.getConfig().getInt("retrack-ticks"));
             commandSender.sendMessage(ChatColor.GREEN + "Successfully reloaded EntityTrackerFixer.");
         } else if (arguments[0].equalsIgnoreCase("debug")) {
-            commandSender.sendMessage("TPS: " + String.format("%.2f", Main.plugin.getTPS()));
+            commandSender.sendMessage("TPS: " + String.format("%.2f", NMSUtilities.getTPS()));
             commandSender.sendMessage("TPS limit: " + Main.plugin.getConfig().getDouble("tps-limit"));
             commandSender.sendMessage("Un-track ticks: " + Main.plugin.getConfig().getInt("untrack-ticks"));
             commandSender.sendMessage("Re-track ticks: " + Main.plugin.getConfig().getInt("retrack-ticks"));

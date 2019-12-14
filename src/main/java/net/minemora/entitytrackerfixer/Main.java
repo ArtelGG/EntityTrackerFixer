@@ -1,9 +1,9 @@
 package net.minemora.entitytrackerfixer;
 
-import net.minecraft.server.v1_14_R1.MinecraftServer;
 import net.minemora.entitytrackerfixer.commands.EntityTrackerFixer;
 import net.minemora.entitytrackerfixer.tasks.RetrackTask;
 import net.minemora.entitytrackerfixer.tasks.UntrackTask;
+import net.minemora.entitytrackerfixer.utilities.NMSUtilities;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,12 +33,8 @@ public class Main extends JavaPlugin {
         Bukkit.getScheduler().cancelTasks(this);
     }
 
-    public double getTPS() {
-        return MinecraftServer.getServer().recentTps[0];
-    }
-
     public boolean tpsLimitReached(double limit) {
         if (limit > 20 || limit < 1) return false;
-        return getTPS() > limit;
+        return NMSUtilities.getTPS() > limit;
     }
 }

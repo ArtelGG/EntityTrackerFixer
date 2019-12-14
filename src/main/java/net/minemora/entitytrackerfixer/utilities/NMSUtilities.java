@@ -1,15 +1,16 @@
 package net.minemora.entitytrackerfixer.utilities;
 
-import net.minecraft.server.v1_14_R1.ChunkProviderServer;
-import net.minecraft.server.v1_14_R1.Entity;
-import net.minecraft.server.v1_14_R1.PlayerChunkMap;
+import net.minecraft.server.v1_14_R1.*;
+import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Set;
 
-public final class NMSEntityTracker {
+public final class NMSUtilities {
     private static Method addEntityMethod;
     private static Method removeEntityMethod;
     private static Field trackerField;
@@ -49,5 +50,18 @@ public final class NMSEntityTracker {
 
     public static Field getTrackerField() {
         return trackerField;
+    }
+
+    public static ChunkProviderServer getChunkProvider(String worldName) {
+        WorldServer worldServer = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
+        return worldServer.getChunkProvider();
+    }
+
+    public static Map<Integer, PlayerChunkMap.EntityTracker> getTrackedEntities(String worldName) {
+        return getChunkProvider(worldName).playerChunkMap.trackedEntities;
+    }
+
+    public static double getTPS() {
+        return MinecraftServer.getServer().recentTps[0];
     }
 }
