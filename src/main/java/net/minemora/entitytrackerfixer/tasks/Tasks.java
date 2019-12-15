@@ -2,16 +2,34 @@ package net.minemora.entitytrackerfixer.tasks;
 
 import net.minecraft.server.v1_14_R1.*;
 import net.minemora.entitytrackerfixer.Main;
-import net.minemora.entitytrackerfixer.utilities.NMSUtilities;
+import net.minemora.entitytrackerfixer.utilities.Reflection;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 public class Tasks {
     private boolean unTrackRunning, reTrackRunning = false;
+    private Method addEntityMethod;
+    private Method removeEntityMethod;
+    private Field trackerField;
+
+    public Tasks() {
+        try {
+            addEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "addEntity", new Class[]{Entity.class});
+            removeEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "removeEntity", new Class[]{Entity.class});
+            trackerField = Reflection.getInstance().getClassPrivateField(PlayerChunkMap.EntityTracker.class, "tracker");
+        } catch (IllegalArgumentException | NoSuchFieldException | NoSuchMethodException | SecurityException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static Tasks getInstance() {
         return new Tasks();
@@ -58,8 +76,8 @@ public class Tasks {
         Set<Integer> toRemove = new HashSet<>();
         int removed = 0;
         try {
-            for (PlayerChunkMap.EntityTracker entityTracker : NMSUtilities.getTrackedEntities(worldName).values()) {
-                Entity entity = (Entity) NMSUtilities.getTrackerField().get(entityTracker);
+            for (PlayerChunkMap.EntityTracker entityTracker : getTrackedEntities(worldName).values()) {
+                Entity entity = (Entity) getTrackerField().get(entityTracker);
                 if (entity instanceof EntityPlayer || entity instanceof EntityWither || entity instanceof EntityEnderDragon) {
                     continue;
                 }
@@ -88,7 +106,7 @@ public class Tasks {
             e.printStackTrace();
         }
         for (int id : toRemove) {
-            NMSUtilities.getTrackedEntities(worldName).remove(id);
+            getTrackedEntities(worldName).remove(id);
         }
         if (Main.pl.getConfig().getBoolean("log-to-console") && removed > 0) {
             Main.pl.getLogger().info("Un-tracked " + removed + " " + (removed == 1 ? "entity" : "entities") + " in " + worldName);
@@ -106,11 +124,47 @@ public class Tasks {
         int range = Main.pl.getConfig().getInt("retrack-range");
         for (Player player : Bukkit.getWorld(worldName).getPlayers()) {
             for (org.bukkit.entity.Entity entity : player.getNearbyEntities(range, range, range)) {
-                if (!NMSUtilities.getTrackedEntities(worldName).containsKey(entity.getEntityId())) {
+                if (!getTrackedEntities(worldName).containsKey(entity.getEntityId())) {
                     entities.add(((CraftEntity) entity).getHandle());
                 }
             }
         }
-        NMSUtilities.reTrackEntities(NMSUtilities.getChunkProvider(worldName), entities);
+        reTrackEntities(getChunkProvider(worldName), entities);
+    }
+
+    public void unTrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {
+        try {
+            for (Entity entity : entities) {
+                removeEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
+            }
+        } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void reTrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {
+        try {
+            for (Entity entity : entities) {
+                if (chunkProviderServer.playerChunkMap.trackedEntities.containsKey(entity.getId())) {
+                    continue;
+                }
+                addEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
+            }
+        } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Field getTrackerField() {
+        return trackerField;
+    }
+
+    public ChunkProviderServer getChunkProvider(String worldName) {
+        WorldServer worldServer = ((CraftWorld) Bukkit.getWorld(worldName)).getHandle();
+        return worldServer.getChunkProvider();
+    }
+
+    public Map<Integer, PlayerChunkMap.EntityTracker> getTrackedEntities(String worldName) {
+        return getChunkProvider(worldName).playerChunkMap.trackedEntities;
     }
 }

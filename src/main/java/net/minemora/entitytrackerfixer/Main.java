@@ -2,7 +2,7 @@ package net.minemora.entitytrackerfixer;
 
 import net.minemora.entitytrackerfixer.commands.EntityTrackerFixer;
 import net.minemora.entitytrackerfixer.tasks.Tasks;
-import net.minemora.entitytrackerfixer.utilities.NMSUtilities;
+import net.minemora.entitytrackerfixer.utilities.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -27,6 +27,6 @@ public class Main extends JavaPlugin {
 
     public boolean tpsLimitReached(double limit) {
         if (limit > 20 || limit < 1) return false;
-        return NMSUtilities.getTPS() > limit;
+        return Reflection.getInstance().getTPS(0) > limit;
     }
 }
