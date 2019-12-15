@@ -1,7 +1,6 @@
 package net.minemora.entitytrackerfixer.commands;
 
 import net.minemora.entitytrackerfixer.Main;
-import net.minemora.entitytrackerfixer.tasks.Tasks;
 import net.minemora.entitytrackerfixer.utilities.Reflection;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -23,8 +22,8 @@ public class EntityTrackerFixer implements CommandExecutor {
         if (arguments[0].equalsIgnoreCase("reload")) {
             Main.pl.stopTasks();
             Main.pl.reloadConfig();
-            Tasks.getInstance().unTrackTask();
-            Tasks.getInstance().reTrackTask();
+            Reflection.getInstance().getNMS().unTrackTask();
+            Reflection.getInstance().getNMS().reTrackTask();
             commandSender.sendMessage(ChatColor.GREEN + "Successfully reloaded EntityTrackerFixer.");
         } else if (arguments[0].equalsIgnoreCase("debug")) {
             commandSender.sendMessage("TPS: " + String.format("%.2f", Reflection.getInstance().getTPS(0)));

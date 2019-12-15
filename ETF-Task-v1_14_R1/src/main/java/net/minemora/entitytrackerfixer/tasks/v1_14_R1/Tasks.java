@@ -1,7 +1,8 @@
-package net.minemora.entitytrackerfixer.tasks;
+package net.minemora.entitytrackerfixer.tasks.v1_14_R1;
 
 import net.minecraft.server.v1_14_R1.*;
 import net.minemora.entitytrackerfixer.Main;
+import net.minemora.entitytrackerfixer.nms.NMS;
 import net.minemora.entitytrackerfixer.utilities.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_14_R1.CraftWorld;
@@ -15,26 +16,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class Tasks {
+public class Tasks implements NMS {
     private boolean unTrackRunning, reTrackRunning = false;
-    private Method addEntityMethod;
-    private Method removeEntityMethod;
-    private Field trackerField;
+    private Method addEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "addEntity", new Class[]{Entity.class});
+    private Method removeEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "removeEntity", new Class[]{Entity.class});
+    private Field trackerField = Reflection.getInstance().getClassPrivateField(PlayerChunkMap.EntityTracker.class, "tracker");
 
-    public Tasks() {
-        try {
-            addEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "addEntity", new Class[]{Entity.class});
-            removeEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "removeEntity", new Class[]{Entity.class});
-            trackerField = Reflection.getInstance().getClassPrivateField(PlayerChunkMap.EntityTracker.class, "tracker");
-        } catch (IllegalArgumentException | NoSuchFieldException | NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Tasks getInstance() {
-        return new Tasks();
-    }
-
+    @Override
     public void unTrackTask() {
         int period = Main.pl.getConfig().getInt("untrack-ticks");
         Main.pl.bs.runTaskTimer(Main.pl, new Runnable() {
@@ -49,6 +37,7 @@ public class Tasks {
         }, 0, period);
     }
 
+    @Override
     public void reTrackTask() {
         int period = Main.pl.getConfig().getInt("retrack-ticks");
         Main.pl.bs.runTaskTimer(Main.pl, new Runnable() {

@@ -1,7 +1,6 @@
 package net.minemora.entitytrackerfixer;
 
 import net.minemora.entitytrackerfixer.commands.EntityTrackerFixer;
-import net.minemora.entitytrackerfixer.tasks.Tasks;
 import net.minemora.entitytrackerfixer.utilities.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,13 +15,13 @@ public class Main extends JavaPlugin {
         pl = this;
         saveDefaultConfig();
         reloadConfig();
+        Reflection.getInstance().getNMS().unTrackTask();
+        Reflection.getInstance().getNMS().reTrackTask();
         getCommand("entitytrackerfixer").setExecutor(new EntityTrackerFixer());
-        Tasks.getInstance().unTrackTask();
-        Tasks.getInstance().reTrackTask();
     }
 
     public void stopTasks() {
-        Bukkit.getScheduler().cancelTasks(this);
+        bs.cancelTasks(this);
     }
 
     public boolean tpsLimitReached(double limit) {
