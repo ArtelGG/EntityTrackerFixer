@@ -26,8 +26,10 @@ public class EntityTrackerFixer implements CommandExecutor {
             Reflection.getInstance().getNMS().reTrackTask();
             commandSender.sendMessage(ChatColor.GREEN + "Successfully reloaded EntityTrackerFixer.");
         } else if (arguments[0].equalsIgnoreCase("debug")) {
+            String tpsLimit = (Main.pl.getConfig().getDouble("tps-limit") > 20 || Main.pl.getConfig().getDouble("tps-limit") < 1) ? "Disabled" : String.valueOf(Main.pl.getConfig().getDouble("tps-limit"));
+            commandSender.sendMessage("NMS: " + Reflection.getInstance().getServerVersion());
             commandSender.sendMessage("TPS: " + String.format("%.2f", Reflection.getInstance().getTPS(0)));
-            commandSender.sendMessage("TPS limit: " + Main.pl.getConfig().getDouble("tps-limit"));
+            commandSender.sendMessage("TPS limit: " + tpsLimit);
             commandSender.sendMessage("Un-track ticks: " + Main.pl.getConfig().getInt("untrack-ticks"));
             commandSender.sendMessage("Re-track ticks: " + Main.pl.getConfig().getInt("retrack-ticks"));
             commandSender.sendMessage("Re-track range: " + Main.pl.getConfig().getInt("retrack-range"));

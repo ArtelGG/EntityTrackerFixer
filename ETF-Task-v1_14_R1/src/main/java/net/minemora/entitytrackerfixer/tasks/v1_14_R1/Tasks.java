@@ -18,37 +18,31 @@ import java.util.Set;
 
 public class Tasks implements NMS {
     private boolean unTrackRunning, reTrackRunning = false;
-    private Method addEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "addEntity", new Class[]{Entity.class});
-    private Method removeEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "removeEntity", new Class[]{Entity.class});
-    private Field trackerField = Reflection.getInstance().getClassPrivateField(PlayerChunkMap.EntityTracker.class, "tracker");
+    private final Method addEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "addEntity", new Class[]{Entity.class});
+    private final Method removeEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "removeEntity", new Class[]{Entity.class});
+    private final Field trackerField = Reflection.getInstance().getClassPrivateField(PlayerChunkMap.EntityTracker.class, "tracker");
 
     @Override
     public void unTrackTask() {
         int period = Main.pl.getConfig().getInt("untrack-ticks");
-        Main.pl.bs.runTaskTimer(Main.pl, new Runnable() {
-            @Override
-            public void run() {
-                unTrackRunning = true;
-                for (String worldName : Main.pl.getConfig().getStringList("worlds")) {
-                    unTrackProcess(worldName);
-                }
-                unTrackRunning = false;
+        Main.pl.bs.runTaskTimer(Main.pl, () -> {
+            unTrackRunning = true;
+            for (String worldName : Main.pl.getConfig().getStringList("worlds")) {
+                unTrackProcess(worldName);
             }
+            unTrackRunning = false;
         }, 0, period);
     }
 
     @Override
     public void reTrackTask() {
         int period = Main.pl.getConfig().getInt("retrack-ticks");
-        Main.pl.bs.runTaskTimer(Main.pl, new Runnable() {
-            @Override
-            public void run() {
-                reTrackRunning = true;
-                for (String worldName : Main.pl.getConfig().getStringList("worlds")) {
-                    reTrackProcess(worldName);
-                }
-                reTrackRunning = false;
+        Main.pl.bs.runTaskTimer(Main.pl, () -> {
+            reTrackRunning = true;
+            for (String worldName : Main.pl.getConfig().getStringList("worlds")) {
+                reTrackProcess(worldName);
             }
+            reTrackRunning = false;
         }, 0, period);
     }
 
@@ -110,15 +104,20 @@ public class Tasks implements NMS {
             return;
         }
         Set<net.minecraft.server.v1_14_R1.Entity> entities = new HashSet<>();
+        int counter = 0;
         int range = Main.pl.getConfig().getInt("retrack-range");
         for (Player player : Bukkit.getWorld(worldName).getPlayers()) {
             for (org.bukkit.entity.Entity entity : player.getNearbyEntities(range, range, range)) {
                 if (!getTrackedEntities(worldName).containsKey(entity.getEntityId())) {
                     entities.add(((CraftEntity) entity).getHandle());
+                    counter++;
                 }
             }
         }
         reTrackEntities(getChunkProvider(worldName), entities);
+        if (Main.pl.getConfig().getBoolean("log-to-console") && counter > 0) {
+            Main.pl.getLogger().info("Re-tracked " + counter + " " + (counter == 1 ? "entity" : "entities") + " in " + worldName);
+        }
     }
 
     public void unTrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {

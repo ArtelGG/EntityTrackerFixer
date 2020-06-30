@@ -8,6 +8,7 @@ api-version: '1.13'
 commands:
   entitytrackerfixer:
     aliases: [etf]
+    description: EntityTrackerFixer commands.
     permission: entitytrackerfixer.admin
 
 permissions:

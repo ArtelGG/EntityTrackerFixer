@@ -10,9 +10,9 @@
     <version>1.1.2-DEV</version>
 
     <repositories>
-        <!-- CodeMC's Public Repository -->
+        <!-- CodeMC's Public NMS Repository -->
         <repository>
-            <id>codemc-repository</id>
+            <id>codemc-nms-repository</id>
             <url>https://repo.codemc.org/repository/nms/</url>
         </repository>
     </repositories>
@@ -21,6 +21,19 @@
         <module>ETF-Core</module>
         <module>ETF-Task-v1_14_R1</module>
         <module>ETF-Task-v1_15_R1</module>
+        <module>ETF-Task-v1_16_R1</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

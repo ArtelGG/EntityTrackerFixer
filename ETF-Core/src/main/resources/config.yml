@@ -1,4 +1,4 @@
-# Should we notify the console when we stop tracking entities?
+# Should we notify the console when we interact with entities?
 # - Default value(s): false
 log-to-console: false
 
@@ -16,8 +16,8 @@ untrack-ticks: 300
 retrack-ticks: 40
 
 # How far (in blocks) should we look for players near un-tracked entities?
-# - Default value(s): 48
-retrack-range: 48
+# - Default value(s): 32
+retrack-range: 32
 
 # What worlds should we perform our tasks on?
 # - Default value(s): [world, world_nether, world_the_end]
