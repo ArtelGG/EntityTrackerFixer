@@ -20,5 +20,6 @@ retrack-ticks: 40
 retrack-range: 32
 
 # What worlds should we perform our tasks on?
-# - Default value(s): [world, world_nether, world_the_end]
-worlds: [world, world_nether, world_the_end]
+# - Note: Adding '*' to this list will enable our tasks in ALL worlds.
+# - Default value(s): ['*']
+worlds: ['*']

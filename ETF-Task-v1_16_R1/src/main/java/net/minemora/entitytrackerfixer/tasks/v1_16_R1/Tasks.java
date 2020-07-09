@@ -5,6 +5,7 @@ import net.minemora.entitytrackerfixer.Main;
 import net.minemora.entitytrackerfixer.nms.NMS;
 import net.minemora.entitytrackerfixer.utilities.Reflection;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.entity.Player;
@@ -17,18 +18,24 @@ import java.util.Map;
 import java.util.Set;
 
 public class Tasks implements NMS {
-    private boolean unTrackRunning, reTrackRunning = false;
     private final Method addEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "addEntity", new Class[]{Entity.class});
     private final Method removeEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "removeEntity", new Class[]{Entity.class});
     private final Field trackerField = Reflection.getInstance().getClassPrivateField(PlayerChunkMap.EntityTracker.class, "tracker");
+    private boolean unTrackRunning, reTrackRunning = false;
 
     @Override
     public void unTrackTask() {
         int period = Main.pl.getConfig().getInt("untrack-ticks");
         Main.pl.bs.runTaskTimer(Main.pl, () -> {
             unTrackRunning = true;
-            for (String worldName : Main.pl.getConfig().getStringList("worlds")) {
-                unTrackProcess(worldName);
+            if (Main.pl.doWorldsContainGlobal(Main.pl.getConfig().getStringList("worlds"))) {
+                for (org.bukkit.World world : Bukkit.getWorlds()) {
+                    unTrackProcess(world.getName());
+                }
+            } else {
+                for (String worldName : Main.pl.getConfig().getStringList("worlds")) {
+                    unTrackProcess(worldName);
+                }
             }
             unTrackRunning = false;
         }, 0, period);
@@ -39,8 +46,14 @@ public class Tasks implements NMS {
         int period = Main.pl.getConfig().getInt("retrack-ticks");
         Main.pl.bs.runTaskTimer(Main.pl, () -> {
             reTrackRunning = true;
-            for (String worldName : Main.pl.getConfig().getStringList("worlds")) {
-                reTrackProcess(worldName);
+            if (Main.pl.doWorldsContainGlobal(Main.pl.getConfig().getStringList("worlds"))) {
+                for (World world : Bukkit.getWorlds()) {
+                    reTrackProcess(world.getName());
+                }
+            } else {
+                for (String worldName : Main.pl.getConfig().getStringList("worlds")) {
+                    reTrackProcess(worldName);
+                }
             }
             reTrackRunning = false;
         }, 0, period);
@@ -61,10 +74,13 @@ public class Tasks implements NMS {
         try {
             for (PlayerChunkMap.EntityTracker entityTracker : getTrackedEntities(worldName).values()) {
                 Entity entity = (Entity) getTrackerField().get(entityTracker);
-                if (entity instanceof EntityPlayer || entity instanceof EntityWither || entity instanceof EntityEnderDragon) {
+                if (entity instanceof EntityPlayer || entity instanceof EntityWither || entity instanceof EntityEnderDragon || entity instanceof EntityComplexPart) {
                     continue;
                 }
                 if (entity.getBukkitEntity().getCustomName() != null) {
+                    continue;
+                }
+                if (!entity.valid) {
                     continue;
                 }
                 boolean remove = false;
