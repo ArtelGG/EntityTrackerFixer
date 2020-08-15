@@ -149,7 +149,7 @@ public class Tasks implements NMS {
     public void reTrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {
         try {
             for (Entity entity : entities) {
-                if (chunkProviderServer.playerChunkMap.trackedEntities.containsKey(entity.getId())) {
+                if (chunkProviderServer.playerChunkMap.trackedEntities.containsKey(entity.getId()) || !entity.valid) {
                     continue;
                 }
                 addEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
