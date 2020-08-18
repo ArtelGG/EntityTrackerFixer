@@ -1,7 +1,7 @@
 ## EntityTrackerFixer
 
 ### Description:
-The goal of this plugin is to try and resolve the issues with the internal server's entity tracker.
+The goal of this plugin is to try to resolve the issues with the server's internal entity tracker.
 Further optimizing your server to ensure it's running as smoothly as possible, given the circumstances with 1.14+.
 
 ### Commands & Permissions:

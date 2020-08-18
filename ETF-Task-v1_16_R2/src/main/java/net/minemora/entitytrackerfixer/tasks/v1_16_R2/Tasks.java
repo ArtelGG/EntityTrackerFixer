@@ -1,13 +1,13 @@
-package net.minemora.entitytrackerfixer.tasks.v1_15_R1;
+package net.minemora.entitytrackerfixer.tasks.v1_16_R2;
 
-import net.minecraft.server.v1_15_R1.*;
+import net.minecraft.server.v1_16_R2.*;
 import net.minemora.entitytrackerfixer.Main;
 import net.minemora.entitytrackerfixer.nms.NMS;
 import net.minemora.entitytrackerfixer.utilities.Reflection;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_16_R2.CraftWorld;
+import org.bukkit.craftbukkit.v1_16_R2.entity.CraftEntity;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Field;
@@ -119,7 +119,7 @@ public class Tasks implements NMS {
         if (Bukkit.getWorld(worldName) == null) {
             return;
         }
-        Set<net.minecraft.server.v1_15_R1.Entity> entities = new HashSet<>();
+        Set<net.minecraft.server.v1_16_R2.Entity> entities = new HashSet<>();
         int counter = 0;
         int range = Main.pl.getConfig().getInt("retrack-range");
         for (Player player : Bukkit.getWorld(worldName).getPlayers()) {
