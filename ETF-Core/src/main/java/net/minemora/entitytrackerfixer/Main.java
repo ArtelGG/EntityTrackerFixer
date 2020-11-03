@@ -39,9 +39,6 @@ public class Main extends JavaPlugin {
     }
 
     public boolean doWorldsContainGlobal(List<String> worldList) {
-        for (String world : worldList) {
-            if (world.equals("*")) return true;
-        }
-        return false;
+        return worldList.stream().anyMatch("*"::equals);
     }
 }

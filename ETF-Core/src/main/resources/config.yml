@@ -21,5 +21,5 @@ retrack-range: 32
 
 # What worlds should we perform our tasks on?
 # - Note: Adding '*' to this list will enable our tasks in ALL worlds.
-# - Default value(s): ['*']
-worlds: ['*']
+# - Default value(s): [ '*' ]
+worlds: [ '*' ]

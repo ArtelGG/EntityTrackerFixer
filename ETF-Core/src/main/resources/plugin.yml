@@ -1,5 +1,5 @@
 name: EntityTrackerFixer
-authors: [Esmorall, Artel]
+authors: [ Esmorall, Artel ]
 
 version: ${project.version}
 main: net.minemora.entitytrackerfixer.Main
@@ -7,7 +7,7 @@ api-version: '1.13'
 
 commands:
   entitytrackerfixer:
-    aliases: [etf]
+    aliases: [ etf ]
     description: EntityTrackerFixer commands.
     permission: entitytrackerfixer.admin
 
