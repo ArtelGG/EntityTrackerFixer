@@ -1,5 +1,5 @@
 name: EntityTrackerFixer
-authors: [ Esmorall, Artel ]
+author: Esmorall
 
 version: ${project.version}
 main: net.minemora.entitytrackerfixer.Main

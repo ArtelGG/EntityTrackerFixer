@@ -24,9 +24,13 @@ public class Main extends JavaPlugin {
         }
         saveDefaultConfig();
         reloadConfig();
+        startTasks();
+        getCommand("entitytrackerfixer").setExecutor(new EntityTrackerFixer());
+    }
+
+    public void startTasks() {
         Reflection.getInstance().getNMS().unTrackTask();
         Reflection.getInstance().getNMS().reTrackTask();
-        getCommand("entitytrackerfixer").setExecutor(new EntityTrackerFixer());
     }
 
     public void stopTasks() {
@@ -34,7 +38,7 @@ public class Main extends JavaPlugin {
     }
 
     public boolean tpsLimitReached(double limit) {
-        if (limit > 20 || limit < 1) return false;
+        if (limit > 20) return false;
         return Reflection.getInstance().getTPS(0) > limit;
     }
 

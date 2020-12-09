@@ -26,38 +26,11 @@ public final class Reflection {
         return new Reflection();
     }
 
-    public Object getPrivateField(Class<?> clazz, Object obj, String fieldName) {
-        try {
-            Field field = clazz.getDeclaredField(fieldName);
-            field.setAccessible(true);
-            Object ret = field.get(obj);
-            field.setAccessible(false);
-            return ret;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public Field getClassPrivateField(Class<?> clazz, String fieldName) {
         try {
             Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
             return field;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public Object invokePrivateMethod(Class<?> clazz, Object obj, String methodName) {
-        return invokePrivateMethod(clazz, obj, methodName, new Class[0]);
-    }
-
-    public Object invokePrivateMethod(Class<?> clazz, Object obj, String methodName, Class[] params, Object... args) {
-        try {
-            Method method = getPrivateMethod(clazz, methodName, params);
-            return method.invoke(obj, args);
         } catch (Exception e) {
             e.printStackTrace();
         }

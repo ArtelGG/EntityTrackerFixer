@@ -3,7 +3,7 @@
 log-to-console: false
 
 # How low should the server's TPS be before we do anything?
-# - Note: Setting this value above 20 or below 1 will skip this check, allowing the tasks to run 24/7.
+# - Note: Setting this value above 20 will skip this check, allowing the tasks to run 24/7.
 # - Default value(s): 19.5
 tps-limit: 19.5
 

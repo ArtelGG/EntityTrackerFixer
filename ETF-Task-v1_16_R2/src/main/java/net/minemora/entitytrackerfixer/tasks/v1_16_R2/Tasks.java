@@ -19,9 +19,8 @@ import java.util.Set;
 
 public class Tasks implements NMS {
     private final Method addEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "addEntity", new Class[]{Entity.class});
-    private final Method removeEntityMethod = Reflection.getInstance().getPrivateMethod(PlayerChunkMap.class, "removeEntity", new Class[]{Entity.class});
     private final Field trackerField = Reflection.getInstance().getClassPrivateField(PlayerChunkMap.EntityTracker.class, "tracker");
-    private boolean unTrackRunning, reTrackRunning = false;
+    private boolean unTrackRunning;
 
     @Override
     public void unTrackTask() {
@@ -45,7 +44,6 @@ public class Tasks implements NMS {
     public void reTrackTask() {
         int period = Main.pl.getConfig().getInt("retrack-ticks");
         Main.pl.bs.runTaskTimer(Main.pl, () -> {
-            reTrackRunning = true;
             if (Main.pl.doWorldsContainGlobal(Main.pl.getConfig().getStringList("worlds"))) {
                 for (World world : Bukkit.getWorlds()) {
                     reTrackProcess(world.getName());
@@ -55,15 +53,11 @@ public class Tasks implements NMS {
                     reTrackProcess(worldName);
                 }
             }
-            reTrackRunning = false;
         }, 0, period);
     }
 
     private void unTrackProcess(String worldName) {
         if (Main.pl.tpsLimitReached(Main.pl.getConfig().getDouble("tps-limit"))) {
-            return;
-        }
-        if (reTrackRunning) {
             return;
         }
         if (Bukkit.getWorld(worldName) == null) {
@@ -133,16 +127,6 @@ public class Tasks implements NMS {
         reTrackEntities(getChunkProvider(worldName), entities);
         if (Main.pl.getConfig().getBoolean("log-to-console") && counter > 0) {
             Main.pl.getLogger().info("Re-tracked " + counter + " " + (counter == 1 ? "entity" : "entities") + " in " + worldName);
-        }
-    }
-
-    public void unTrackEntities(ChunkProviderServer chunkProviderServer, Set<Entity> entities) {
-        try {
-            for (Entity entity : entities) {
-                removeEntityMethod.invoke(chunkProviderServer.playerChunkMap, entity);
-            }
-        } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
         }
     }
 
